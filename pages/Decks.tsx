@@ -1,25 +1,30 @@
 import React, { Component } from 'react'
-import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native'
 import { connect } from 'react-redux';
 import tailwind from 'tailwind-rn';
 import { DeckInterface } from '../interfaces';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 type DecksType = {
     decks:Array<DeckInterface>
 };
 
-
-
-
 class Decks extends Component<DecksType> {
+    
 
     renderDeck = (render:any) => {
         const { item } = render;
         return (
-        <View style={tailwind('w-full my-2 bg-blue-400 flex justify-center items-center h-36 z-10 text-center rounded-md')}>
-            <Text style={tailwind('text-3xl text-white')}>{item.title}</Text> 
-            <Text style={tailwind('text-3xl text-white')}>Cards : {item.cards.length}</Text>    
-        </View> 
+            <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('DeckView',{
+                id:item.id,
+                title:item.title
+            })}>
+                <View style={tailwind('w-full my-2 bg-blue-400 flex justify-center items-center h-36 z-10 text-center rounded-md')}>
+                    <Text style={tailwind('text-3xl text-white')}>{item.title}</Text> 
+                    <Text style={tailwind('text-3xl text-white')}>Cards : {item.cards.length}</Text>    
+                </View> 
+            </TouchableWithoutFeedback>
         )
             
     }
@@ -28,14 +33,6 @@ class Decks extends Component<DecksType> {
         const { decks } = this.props;
         return (
             <View style={tailwind('bg-red-100 w-full h-full flex justify-center items-center')}>
-                {/* {
-                    decks.map((deck) => (
-                        <View style={tailwind('mt-6 bg-blue-400 flex justify-center items-center w-2/3 h-36 z-10 text-center rounded-md')}>
-                            <Text style={tailwind('text-3xl text-white')}>{deck.title}</Text>    
-                        </View> 
-                    ))
-                } */}
-
                 <FlatList
                     style={tailwind('flex w-full')}
                     data={decks}
