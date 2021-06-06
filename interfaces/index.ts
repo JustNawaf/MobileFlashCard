@@ -1,43 +1,50 @@
 export interface DeckInterface {
     id:string,
     title:string,
-    cards:[] | Array<CardInterface>
+    cardsIds:[] | Array<string>
 };
 
 
 
 export interface CardInterface {
-    id:string,
-}
-
-
-export interface Card {
     id: string,
-    type: TrueOrFalse | MultipleChoices | MultipleChoicesSum | Fill
+    deckID:string,
+    // type: 'TrueOrFalse' | 'MultipleChoices',
+    cardsIds:Array<string>,
+    type:string,
+    data:TrueOrFalse | MultipleChoices
 }
 
+export interface QuizInterface {
+    id: string,
+    deckID:string,
+    questions:Question
+    completed:boolean,
+}
 
 
 type TrueOrFalse = {
     id: string,
-    trueAnswer: string,
-    falseAnswer: string    
+    text:string,
+    condition:boolean 
 };
 
 type MultipleChoices = {
     id: string,
-    choices: Array<String>,
-    trueChoice: string
+    choices: Array<Choice>,
+    trueChoice: Number
 };
 
-type MultipleChoicesSum = {
-    id: string,
-    choices: Array<String>,
-    trueChoices: Array<String>
+type Choice = {
+    id:Number,
+    value:string,
+}
 
+
+type Question = {
+    [key:string]:{
+        cardID:string,
+        answer:any,
+        mark:Number
+    }
 };
-
-type Fill = {
-    id: string,
-    fill: string
-};  

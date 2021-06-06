@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import tailwind from 'tailwind-rn';
 import { createDeck } from '../actions/Deck';
 import { generateID } from '../Helpers';
+import { addDeckST } from '../Helpers/storage';
 
 type StateCreateDeck = {
     deckTitle:string,
@@ -26,11 +27,14 @@ class CreateDeck extends Component<StateCreateDeck>{
 
     crDeck = () => {
         const { dispatch } = this.props;
-        dispatch(createDeck({
+        const deck = {
             id:generateID(),
             title:this.state.deckTitle,
-            cards:[]
-        }));
+            cardsIds:[],
+            quizzes:[]
+        };
+        dispatch(createDeck(deck));
+        // addDeckST(deck);
     };
 
     render() {
@@ -46,8 +50,8 @@ class CreateDeck extends Component<StateCreateDeck>{
                             value={deckTitle}
                         />
                     </SafeAreaView>
+                    <Button color={'black'} title="create" onPress={() => this.crDeck()}/>
                 </View>
-                <Button color={'black'} title="create" onPress={() => this.crDeck()}/>
             </View>
         )
     }

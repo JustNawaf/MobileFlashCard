@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, SafeAreaView } from 'react-native'
 import { connect } from 'react-redux';
 import GenereateInputsType from '../components/GenereateInputsType';
 import GenereateCardsTypes from '../components/GenereateCardsTypes';
+import tailwind from 'tailwind-rn';
 
 type AddCardType = {
     id:string,
@@ -10,21 +11,24 @@ type AddCardType = {
 
 class AddCard extends Component<AddCardType> {
     state = {
-        selectedType:null,
+        selectedType:'',
+        data:null,
     };
 
     render() {
         const { id } = this.props;
         const { selectedType } = this.state;
         return (
-            <View>
-                <Text> AddCard {id} </Text>
+            <SafeAreaView style={tailwind('flex-1 justify-around')}>
                 <GenereateCardsTypes onTypeSelected={(type:string) => this.setState({selectedType:type})}/>
+
                 {
-                    selectedType !== null && <GenereateInputsType />
+                    selectedType !== null 
+                    && 
+                    <GenereateInputsType deckID={id} selectedType={selectedType} />
                 }
                 
-            </View>
+            </SafeAreaView>
         )
     }
 }

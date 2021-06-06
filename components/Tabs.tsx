@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Decks from '../pages/Decks';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CreateDeck from '../pages/CreateDeck';
+import QuizzesHistory from '../pages/QuizzesHistory';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,10 +22,8 @@ export default class Tabs extends Component {
                     tabBarIcon: ({ color, size }) => {
                     const icons:icons = {
                         Decks: 'account',
-                        Profile: 'airplane',
                         Quiz: 'book-plus',
-                        History: 'backup-restore',
-                        Add: 'bed-single',
+                        QuizHistory: 'backup-restore',
 
                     };
 
@@ -39,10 +38,8 @@ export default class Tabs extends Component {
                 })}
                 >
                 <Tab.Screen name="Decks" component={Decks} />
-                <Tab.Screen name="Profile" component={Decks}  />
                 <Tab.Screen name="Quiz" component={CreateDeck} />
-                <Tab.Screen name="History" component={Decks} />
-                <Tab.Screen name="Add" component={Decks} />
+                <Tab.Screen name="QuizHistory" component={QuizzesHistory} />
             </Tab.Navigator>
         )
     }
