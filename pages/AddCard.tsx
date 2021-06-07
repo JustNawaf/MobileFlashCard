@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Text, View, SafeAreaView } from 'react-native'
+import { Text, View, ScrollView } from 'react-native'
 import { connect } from 'react-redux';
 import GenereateInputsType from '../components/GenereateInputsType';
 import GenereateCardsTypes from '../components/GenereateCardsTypes';
-import tailwind from 'tailwind-rn';
 
 type AddCardType = {
     id:string,
@@ -19,16 +18,16 @@ class AddCard extends Component<AddCardType> {
         const { id } = this.props;
         const { selectedType } = this.state;
         return (
-            <SafeAreaView style={tailwind('flex-1 justify-around')}>
+            <ScrollView>
                 <GenereateCardsTypes onTypeSelected={(type:string) => this.setState({selectedType:type})}/>
 
                 {
                     selectedType !== null 
                     && 
-                    <GenereateInputsType deckID={id} selectedType={selectedType} />
+                    <GenereateInputsType deckID={id} selectedType={selectedType} navigation={this.props.navigation} />
                 }
                 
-            </SafeAreaView>
+            </ScrollView>
         )
     }
 }

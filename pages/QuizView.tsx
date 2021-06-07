@@ -55,9 +55,6 @@ class QuizView extends Component<QuizViewType> {
         return (
             <View>
                 <RenderQuestion onAnswerTrueOrFalse={this.onAnswerTrueOrFalse} onAnswerMultipleChoices={this.onAnswerMultipleChoices} cardID={question.cardID}/>
-                <TouchableOpacity onPress={() => this.answerQuestion() }>
-                    <Text>To Question</Text>
-                </TouchableOpacity>
             </View>
         )
     }

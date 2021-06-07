@@ -39,7 +39,7 @@ export default class Tabs extends Component {
                 >
                 <Tab.Screen name="Decks" component={Decks} />
                 <Tab.Screen name="Quiz" component={CreateDeck} />
-                <Tab.Screen name="QuizHistory" component={QuizzesHistory} />
+                {/* <Tab.Screen name="QuizHistory" component={QuizzesHistory} /> */}
             </Tab.Navigator>
         )
     }

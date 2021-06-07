@@ -11,7 +11,7 @@ export interface StoreInterface {
 
 
 const persistConfig = {
-  key: 'root3',
+  key: 'root',
   storage:AsyncStorage,
 }
 

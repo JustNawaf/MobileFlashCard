@@ -18,7 +18,20 @@ class Quizzes extends Component<QuizzesType> {
             <View style={tailwind('w-full my-2 bg-blue-400 flex justify-center items-center h-36 z-10 text-center rounded-md')}>
                 <Text style={tailwind('text-3xl text-white')}>{item.deckID}</Text> 
                 <Text style={tailwind('text-3xl text-white')}>Completed : {item.completed ? 'Yes' : 'No'}</Text>    
-            </View> 
+            </View>
+                // <View style={tailwind('h-32 my-1 px-4 py-2 border-b border-gray-100')}>
+                //     <Text style={tailwind('text-gray-600 text-center text-2xl bg-gray-200 rounded-md')}>{item.title}</Text>
+                //     <View style={tailwind('flex flex-row justify-between items-center mt-4')}>
+                //         <View style={tailwind('bg-green-200 w-1/3 mx-2 rounded-md')}>
+                //             <Text style={tailwind('text-center text-lg text-white')}>{item.cardsIds.length}</Text>
+                //             <Text style={tailwind('text-center text-lg text-white')}>Cards</Text>
+                //         </View>
+                //         <View style={tailwind('bg-blue-200 w-1/3 mx-2 rounded-md')}>
+                //             <Text style={tailwind('text-center text-lg text-white')}>{item.cardsIds.length}</Text>
+                //             <Text style={tailwind('text-center text-lg text-white')}>Quizzes</Text>
+                //         </View>
+                //     </View> 
+                // </View>
         )
             
     }
@@ -34,7 +47,7 @@ class Quizzes extends Component<QuizzesType> {
                         data={quizzes}
                         renderItem={this.renderDeck}
                         keyExtractor={(item) => item.id}
-                        contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
+                        // contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}
                     />
                 }
                 {

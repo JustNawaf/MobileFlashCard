@@ -22,6 +22,11 @@ export interface QuizInterface {
     completed:boolean,
 }
 
+export interface DeckNotification {
+    id:string,
+    deckID:string
+}
+
 
 type TrueOrFalse = {
     id: string,
