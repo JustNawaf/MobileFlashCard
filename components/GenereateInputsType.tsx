@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Text, View, ScrollView, TextInput } from 'react-native'
+import { Text, View, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
 import tailwind from 'tailwind-rn';
-import { RadioButton,Button } from 'react-native-paper';
+import { RadioButton, Button } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { createCard } from '../actions/Cards';
 import { generateID } from '../Helpers';
@@ -13,7 +13,8 @@ import { addCardST } from '../Helpers/storage';
 type GenereateInputsTypeType = {
     selectedType:string,
     dispatch:Function,
-    deckID:string
+    deckID:string,
+    navigation:any,
 }
 class GenereateInputsType extends Component<GenereateInputsTypeType> {
     state = {
@@ -42,6 +43,22 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
         TrueOrFalse:{
             text:'',
             condition:null
+        },
+        errorsMutli:{
+            validStyle:'border border-gray-300',
+            errorStyle:'border border-red-300',
+            title:false,
+            1:false,
+            2:false,
+            3:false,
+            4:false,
+            raido:true
+        },
+        errorsTrueOrFalse:{
+            validStyle:'border border-gray-300',
+            errorStyle:'border border-red-300',
+            text:false,
+            condition:true
         }
     };
 
@@ -53,6 +70,51 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
                 title
             }
         }))
+    }
+
+    updTtitle = (value:string) => {
+        if(value === ''){
+            this.setState(prev => ({
+                ...prev,
+                errorsMutli:{
+                    ...prev.errorsMutli,
+                    title:true
+                }
+            }));
+        }else{
+            this.setState(prev => ({
+                ...prev,
+                errorsMutli:{
+                    ...prev.errorsMutli,
+                    title:false
+                }
+            }));
+        }
+
+        this.updateTitle(value);
+
+    }
+
+    updChoice = (id:Number,value:string) => {
+        if(value === ''){
+            this.setState(prev => ({
+                ...prev,
+                errorsMutli:{
+                    ...prev.errorsMutli,
+                    [id]:true
+                }
+            }));
+        }else{
+            this.setState(prev => ({
+                ...prev,
+                errorsMutli:{
+                    ...prev.errorsMutli,
+                    [id]:false
+                }
+            }));
+        }
+
+        this.updateChoice(id,value);
     }
 
     updateChoice = (id:Number,value:string) => {
@@ -68,10 +130,6 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
             }
         }))
     };
-    
-    deleteChoice = () => {
-
-    };
 
     setTrueChoice = (id:Number) => {
         this.setState(prev => ({
@@ -81,6 +139,14 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
                 trueChoice:id
             }
         }))
+
+        this.setState(prev => ({
+            ...prev,
+            errorsMutli:{
+                ...prev.errorsMutli,
+                raido:false
+            }
+        }));
     };
 
     addTextValue = (text:string) => {
@@ -93,7 +159,29 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
         }))
     };
 
-    UpdateTrueOrFalse = (trueOrFalse:boolean) => {
+    aTextValue = (text:string) => {
+        if(text === ''){
+            this.setState(prev => ({
+                ...prev,
+                errorsTrueOrFalse:{
+                    ...prev.errorsTrueOrFalse,
+                    text:true
+                }
+            }));
+        }else{
+            this.setState(prev => ({
+                ...prev,
+                errorsTrueOrFalse:{
+                    ...prev.errorsTrueOrFalse,
+                    text:false
+                }
+            }));
+        }
+
+        this.addTextValue(text);
+    };
+
+    updateTrueOrFalse = (trueOrFalse:boolean) => {
         this.setState(prev => ({
             ...prev,
             TrueOrFalse:{
@@ -101,41 +189,76 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
                 condition:trueOrFalse,
             }
         }))
+
+        this.setState(prev => ({
+            ...prev,
+            errorsTrueOrFalse:{
+                ...prev.errorsTrueOrFalse,
+                condition:false
+            }
+        }));
+    }
+
+    checkErrors = () => {
+        const { errorsMutli, MultipleChoices } = this.state;
+
+        if(errorsMutli.title || errorsMutli[1] || errorsMutli[2] || errorsMutli[3] || errorsMutli[4] || errorsMutli.raido){
+            return true;
+        }
+
+        return false;
+    }
+
+    checkErrorsTrueOrFalse = () => {
+        const { errorsTrueOrFalse, TrueOrFalse } = this.state;
+
+        if(errorsTrueOrFalse.text || errorsTrueOrFalse.condition){
+            return true;
+        }
+
+        return false;
     }
 
     submit = () => {
-        const { dispatch, deckID, selectedType } = this.props;
-        let card:CardInterface = {
-            id:generateID(),
-            deckID,
-            type:selectedType,
-            data:this.state[this.props.selectedType]
-        };
-        dispatch(addCardToDeck(card))
-        // addCardST(card);
+        if(!this.checkErrors() || !this.checkErrorsTrueOrFalse()){
+            const { dispatch, deckID, selectedType } = this.props;
+            let card:CardInterface = {
+                id:generateID(),
+                deckID,
+                type:selectedType,
+                data:this.state[this.props.selectedType]
+            };
+            dispatch(addCardToDeck(card))
+            this.props.navigation.goBack()
+        }
     }
 
     render() {
         const { selectedType } = this.props;
         return (
-            <View>
-                <Text> {selectedType} </Text>
+            <View style={tailwind('mt-6')}>
+                <Text style={tailwind('text-center text-lg mb-4')}> {selectedType} </Text>
                 {
                     selectedType === 'MultipleChoices' &&
                     <RenderMultipleChoices
                         submit={this.submit}
                         setTrueChoice={this.setTrueChoice}
-                        updateTitle={this.updateTitle}
-                        updateChoice={this.updateChoice}
-                        deleteChoice={this.deleteChoice} />
+                        updTtitle={this.updTtitle}
+                        updChoice={this.updChoice}
+                        checkErrors={this.checkErrors}
+                        errorsMutli={this.state.errorsMutli}
+                        />
+                         
                 }
 
                 {
                     selectedType === 'TrueOrFalse' &&
                     <RenderTrueOrFalse 
                         submit={this.submit} 
-                        UpdateTrueOrFalse={this.UpdateTrueOrFalse} 
-                        addTextValue={this.addTextValue} />
+                        updateTrueOrFalse={this.updateTrueOrFalse}
+                        errorsTrueOrFalse={this.state.errorsTrueOrFalse}
+                        checkErrorsTrueOrFalse={this.checkErrorsTrueOrFalse}
+                        aTextValue={this.aTextValue} />
                 }
             </View>
         )
@@ -144,18 +267,19 @@ class GenereateInputsType extends Component<GenereateInputsTypeType> {
 
 
 type RenderMultipleChoicesType = {
-    updateTitle:Function,
-    updateChoice:Function,
-    deleteChoice:Function,
+    updTtitle:Function,
+    updChoice:Function,
     setTrueChoice:Function,
-    submit:Function
+    submit:Function,
+    checkErrors:Function,
+    errorsMutli:any
 };
 
 
 class RenderMultipleChoices extends Component<RenderMultipleChoicesType> {
 
     state = {
-        trueChoice:null,
+        trueChoice:null
     };
 
     setTrueChoice = (optionID:Number) => {
@@ -167,43 +291,48 @@ class RenderMultipleChoices extends Component<RenderMultipleChoicesType> {
 
     render() {
         const { trueChoice } = this.state;
-
+        const { errorsMutli } = this.props;
+        console.log(this.props.checkErrors())
         return (
             <View style={tailwind('w-full')}>
                 <View style={tailwind('w-full mx-4')}>
-                    <ScrollView>
-                        <View style={tailwind('my-1 flex flex-row')}>
+                    <SafeAreaView>
+                        <SafeAreaView style={tailwind('my-1 flex flex-row')}>
                                 <TextInput 
-                                    onChangeText={(value) => this.props.updateTitle(value)}
-                                    style={tailwind('w-5/6 border border-gray-200 p-1')} 
+                                    onChangeText={(value) => this.props.updTtitle(value)}
+                                    style={tailwind(`w-5/6 ${errorsMutli.title ? errorsMutli.errorStyle:errorsMutli.validStyle} p-1 text-black rounded`)}
+                                    placeholderTextColor={'gray'} 
                                     placeholder={'Card Title'}/>
-                        </View>
-                        <View style={tailwind('my-1 flex flex-row')}>
+                        </SafeAreaView>
+                        <SafeAreaView style={tailwind('my-1 flex flex-row')}>
                             <TextInput 
-                                onChangeText={(value) => this.props.updateChoice(1,value)}
-                                style={tailwind('w-5/6 border border-gray-200 p-1')} 
+                                onChangeText={(value) => this.props.updChoice(1,value)}
+                                style={tailwind(`w-5/6 ${errorsMutli[1] ? errorsMutli.errorStyle:errorsMutli.validStyle} p-1 text-black rounded`)}
+                                placeholderTextColor={'gray'} 
                                 placeholder={'Option 1'}/>
                             <RadioButton
                                 value="1"
                                 status={ trueChoice === 1 ? 'checked' : 'unchecked' }
                                 onPress={() => this.setTrueChoice(1)}
                             />
-                        </View>
-                        <View style={tailwind('my-1 flex flex-row')}>
+                        </SafeAreaView>
+                        <SafeAreaView style={tailwind('my-1 flex flex-row')}>
                             <TextInput 
-                                onChangeText={(value) => this.props.updateChoice(2,value)}
-                                style={tailwind('w-5/6 border border-gray-200 p-1')} 
+                                onChangeText={(value) => this.props.updChoice(2,value)}
+                                style={tailwind(`w-5/6 ${errorsMutli[2] ? errorsMutli.errorStyle:errorsMutli.validStyle} p-1 text-black rounded`)}
+                                placeholderTextColor={'gray'} 
                                 placeholder={'Option 2'}/>
                             <RadioButton
                                 value="2"
                                 status={ trueChoice === 2 ? 'checked' : 'unchecked' }
                                 onPress={() => this.setTrueChoice(2)}
                             />
-                        </View>
-                        <View style={tailwind('my-1 flex flex-row')}>
+                        </SafeAreaView>
+                        <SafeAreaView style={tailwind('my-1 flex flex-row')}>
                             <TextInput 
-                                onChangeText={(value) => this.props.updateChoice(3,value)}
-                                style={tailwind('w-5/6 border border-gray-200 p-1')} 
+                                onChangeText={(value) => this.props.updChoice(3,value)}
+                                style={tailwind(`w-5/6 ${errorsMutli[3] ? errorsMutli.errorStyle:errorsMutli.validStyle} p-1 text-black rounded`)}
+                                placeholderTextColor={'gray'} 
                                 placeholder={'Option 3'}/>
 
                             <RadioButton
@@ -211,11 +340,12 @@ class RenderMultipleChoices extends Component<RenderMultipleChoicesType> {
                                 status={ trueChoice === 3 ? 'checked' : 'unchecked' }
                                 onPress={() => this.setTrueChoice(3)}
                             />
-                        </View>
-                        <View style={tailwind('my-1 flex flex-row')}>
+                        </SafeAreaView>
+                        <SafeAreaView style={tailwind('my-1 flex flex-row')}>
                             <TextInput 
-                                onChangeText={(value) => this.props.updateChoice(4,value)}
-                                style={tailwind('w-5/6 border border-gray-200 p-1')} 
+                                onChangeText={(value) => this.props.updChoice(4,value)}
+                                style={tailwind(`w-5/6 ${errorsMutli[4] ? errorsMutli.errorStyle:errorsMutli.validStyle} p-1 text-black rounded`)}
+                                placeholderTextColor={'gray'} 
                                 placeholder={'Option 4'}/>
 
                             <RadioButton
@@ -223,15 +353,14 @@ class RenderMultipleChoices extends Component<RenderMultipleChoicesType> {
                                 status={ trueChoice === 4 ? 'checked' : 'unchecked' }
                                 onPress={() => this.setTrueChoice(4)}
                             />
-                        </View>
-                    </ScrollView>
+                        </SafeAreaView>
+                    </SafeAreaView>
                 </View>
-                <Button 
-                    onPress={() => this.props.submit()}
-                    style={tailwind('bg-black mx-6 mt-4')}
-                    mode="contained">
-                        Submit
-                </Button>
+                <TouchableOpacity onPress={() => this.props.submit()} 
+                    style={tailwind(`self-center mt-4 w-1/2 py-2 ${this.props.checkErrors() ? 'bg-gray-200':'bg-black'} rounded-md`)} disabled={this.props.checkErrors()}>
+                    <Text style={tailwind(`text-center ${this.props.checkErrors() ? 'text-gray-300':'text-white'} text-lg`)}>Create</Text>
+                </TouchableOpacity>
+    
             </View>
         )
     }
@@ -239,9 +368,11 @@ class RenderMultipleChoices extends Component<RenderMultipleChoicesType> {
 
 
 type RenderTrueOrFalseType = {
-    addTextValue:Function,
-    UpdateTrueOrFalse:Function,
-    submit:Function
+    aTextValue:Function,
+    errorsTrueOrFalse:any,
+    updateTrueOrFalse:Function,
+    submit:Function,
+    checkErrorsTrueOrFalse:Function
 };
 class RenderTrueOrFalse extends Component<RenderTrueOrFalseType> {
     state = {
@@ -255,9 +386,9 @@ class RenderTrueOrFalse extends Component<RenderTrueOrFalseType> {
         })
 
         if(name === 'cardText'){
-            this.props.addTextValue(value)   
+            this.props.aTextValue(value)   
         }else{
-            this.props.UpdateTrueOrFalse(value)
+            this.props.updateTrueOrFalse(value)
         }
 
 
@@ -265,18 +396,20 @@ class RenderTrueOrFalse extends Component<RenderTrueOrFalseType> {
 
     render() {
         const { trueOrFalse } = this.state
+        const { errorsTrueOrFalse } = this.props;
+        console.log(this.props.checkErrorsTrueOrFalse())
         return (
             <View>
-                <View style={tailwind('w-full px-6')}>
-                    <Text>Card Text</Text>
+                <View style={tailwind('w-full mb-4')}>
                     <TextInput 
-                        onChangeText={(value) => this.onChange("cardText",value)}
-                        style={tailwind('border border-gray-200 mt-2 p-1')} 
+                        style={tailwind(`self-center w-5/6 ${errorsTrueOrFalse.text ? errorsTrueOrFalse.errorStyle:errorsTrueOrFalse.validStyle} p-1 text-black rounded`)}
+                        placeholderTextColor={'gray'}
+                        onChangeText={(text) => this.onChange("cardText",text)}
                         placeholder={'Card Text'}/>
                 </View>
                 <View style={tailwind('flex flex-row justify-center')}>
                     <View style={tailwind('flex flex-row items-center')}>
-                        <Text>True</Text>
+                        <Text style={tailwind('text-lg')}>True</Text>
                         <RadioButton
                             value="true"
                             status={ trueOrFalse === true ? 'checked' : 'unchecked' }
@@ -285,7 +418,7 @@ class RenderTrueOrFalse extends Component<RenderTrueOrFalseType> {
                     </View>
                     
                     <View style={tailwind('flex flex-row items-center')}>
-                        <Text>False</Text>
+                        <Text style={tailwind('text-lg')}>False</Text>
                         <RadioButton
                             value="false"
                             status={ trueOrFalse === false ? 'checked' : 'unchecked' }
@@ -293,12 +426,10 @@ class RenderTrueOrFalse extends Component<RenderTrueOrFalseType> {
                         />
                     </View>
                 </View>
-                <Button 
-                    onPress={() => this.props.submit()}
-                    style={tailwind('bg-black mx-6 mt-4')}
-                    mode="contained">
-                        Submit
-                </Button>
+                <TouchableOpacity onPress={() => this.props.submit()} 
+                    style={tailwind(`self-center mt-4 w-1/2 py-2 ${this.props.checkErrorsTrueOrFalse() ? 'bg-gray-200':'bg-black'} rounded-md`)} disabled={this.props.checkErrorsTrueOrFalse()}>
+                    <Text style={tailwind(`text-center ${this.props.checkErrorsTrueOrFalse() ? 'text-gray-300':'text-white'} text-lg`)}>Create</Text>
+                </TouchableOpacity>
             </View>
         )
     }

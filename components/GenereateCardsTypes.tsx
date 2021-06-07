@@ -36,8 +36,8 @@ export default class GenereateCardsTypes extends Component<GenereateCardsTypesTy
             'TrueOrFalse'
         ];
         return (
-            <View style={tailwind('px-2 py-1')}>
-                <Text style={tailwind('text-center')}>Select from those types</Text>
+            <View style={tailwind('px-2 py-1 my-6')}>
+                <Text style={tailwind('text-center text-lg')}>Select from those types</Text>
                 <ScrollView style={tailwind('self-center w-5/6 mt-4')}
                     showsVerticalScrollIndicator={true}
                     persistentScrollbar={true} 
@@ -48,7 +48,7 @@ export default class GenereateCardsTypes extends Component<GenereateCardsTypesTy
                                 key={index} 
                                 onPress={() => this.setCheck(type)}
                                 style={tailwind(`${this.getColor(type)} mx-2 px-4 py-2 rounded-md`)}>
-                                <Text style={tailwind('text-gray-600')}>{ type }</Text>
+                                <Text style={tailwind('text-gray-600 text-lg')}>{ type }</Text>
                             </TouchableOpacity>
                         ))
                     }
